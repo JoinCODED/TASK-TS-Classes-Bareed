@@ -54,9 +54,9 @@ describe("Customer", () => {
         "Is customer at %O in range of vendor at %O with range of %f?",
         (customerLocation, vendorLocation, range, isInRange) => {
           let vendor = new Vendor("Hamsa", 0, 0);
-          vendor.range = range;
-          vendor.location = vendorLocation;
-          customer.location = customerLocation;
+          vendor.range = range as number;
+          vendor.location = vendorLocation as Point;
+          customer.location = customerLocation as Point;
           expect(customer._isInRange(vendor)).toBe(isInRange);
         }
       );
@@ -78,9 +78,9 @@ describe("Customer", () => {
         "Can customer with %f money buy %i ice creams at %i each?",
         (money, numberOfIceCreams, price, hasEnoughMoney) => {
           let vendor = new Vendor("Hamsa", 0, 0);
-          vendor.price = price;
-          customer.wallet.money = money;
-          expect(customer._haveEnoughMoney(vendor, numberOfIceCreams)).toBe(
+          vendor.price = price as number;
+          customer.wallet.money = money as number;
+          expect(customer._haveEnoughMoney(vendor, numberOfIceCreams as number)).toBe(
             hasEnoughMoney
           );
         }
