@@ -1,3 +1,5 @@
+import { createLanguageService } from "typescript";
+
 /**************************************************************
  * Point: defines a point on the map using X and Y coordinates
  *
@@ -18,17 +20,17 @@ class Point {
     this.y = y;
   }
 
-  distanceTo(point: Point) {
+  distanceTo(point: Point): number {
     let xDelta = this.x - point.x;
     let yDelta = this.y - point.y;
     return Math.sqrt(xDelta * xDelta + yDelta * yDelta); // PYTHAGORAS!
   }
 
-  equals(point: Point) {
-    point.x === this.x && point.y === this.y;
+  equals(point: Point): boolean {
+   return point.x === this.x && point.y === this.y;
   }
 
-  static randomPoint(maxX = 100, maxY = 100) {
+  static randomPoint(maxX = 100, maxY = 100): Point {
     let x = Math.random() * maxX;
     let y = Math.random() * maxY;
     return new Point(x, y);
@@ -48,11 +50,18 @@ class Point {
  **********************************************************/
 class Wallet {
   // implement Wallet!
-  constructor(money = 0) {}
+  money: number
+  constructor(money = 0 ) {
+     this.money = money
+  }
 
-  credit = (amount: number) => {};
+  credit = (amount: number) => {
+    this.money+=amount
+  };
 
-  debit = (amount: number) => {};
+  debit = (amount: number) => {
+    this.money-=amount
+  };
 }
 
 /**********************************************************
@@ -68,6 +77,18 @@ class Wallet {
  **********************************************************/
 class Person {
   // implement Person!
+  name: string
+  location: Point
+  wallet: Wallet
+  constructor(name: string, x: number, y: number){
+    this.name = name
+    this.location = new Point(x, y)
+    this.wallet = new Wallet(0)
+  }
+
+  moveTo(point: Point){
+    this.location = point
+  }
 }
 
 /**********************************************************
@@ -85,8 +106,29 @@ class Person {
  *
  * new vendor = new Vendor(name, x, y);
  **********************************************************/
-class Vendor {
+class Vendor extends Person {
   // implement Vendor!
+  price : number
+  range: number
+  constructor(name: string, x: number, y: number, range: number = 5, price: number = 1) {
+    super(name, x, y);
+    
+    this.price = price
+    this.range = range
+  }
+
+  sellTo(customer: Person, numberOfIceCreams: number){
+    const total = this.price * numberOfIceCreams
+    this.moveTo(customer.location)
+    if(customer.wallet.money >= total) 
+    {
+      this.wallet.credit(total)
+      customer.wallet.debit(total)
+    } 
+    else {
+      console.log("Not enough money in customer wallet.")
+    }
+  }
 }
 
 /**********************************************************
@@ -105,8 +147,31 @@ class Vendor {
  *
  * new customer = new Customer(name, x, y);
  **********************************************************/
-class Customer {
+class Customer extends Person{
   // implement Customer!
+ 
+
+  constructor(name: string, x: number, y : number){
+    super(name, x, y)
+    this.wallet = new Wallet(10)
+  }
+
+  _isInRange(vendor : Vendor) : boolean{
+    return this.location.distanceTo(vendor.location) <= vendor.range
+  }
+
+  _haveEnoughMoney(vendor: Vendor, numberOfIceCreams: number){
+    return this.wallet.money >=(vendor.price*numberOfIceCreams)
+  }
+
+  requestIceCream(vendor: Vendor, numberOfIceCreams: number){
+
+    if(this._isInRange(vendor) && this._haveEnoughMoney(vendor,numberOfIceCreams)){
+      vendor.sellTo(this, numberOfIceCreams)
+    }else{
+      "request denied."
+    }
+  }
 }
 
 export { Point, Wallet, Person, Customer, Vendor };
