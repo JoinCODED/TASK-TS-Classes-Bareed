@@ -48,11 +48,18 @@ class Point {
  **********************************************************/
 class Wallet {
   // implement Wallet!
-  constructor(money = 0) {}
+  money: number;
+  constructor(money = 0) {
+    this.money = money;
+  }
 
-  credit = (amount: number) => {};
+  credit = (amount: number) => {
+    this.money += amount;
+  };
 
-  debit = (amount: number) => {};
+  debit = (amount: number) => {
+    this.money -= amount;
+  };
 }
 
 /**********************************************************
@@ -68,6 +75,18 @@ class Wallet {
  **********************************************************/
 class Person {
   // implement Person!
+  name: string;
+  location: Point;
+  wallet: Wallet = new Wallet();
+
+  constructor(name: string, x: number, y: number) {
+    this.name = name;
+    this.location = new Point(x, y);
+  }
+
+  moveTo(point: Point) {
+    this.location = new Point(point.x, point.y);
+  }
 }
 
 /**********************************************************
@@ -85,8 +104,20 @@ class Person {
  *
  * new vendor = new Vendor(name, x, y);
  **********************************************************/
-class Vendor {
+class Vendor extends Person {
   // implement Vendor!
+  range: number = 5;
+  price: number = 1;
+
+  constructor(name: string, x: number, y: number) {
+    super(name, x, y);
+  }
+
+  sellTo(customer: Customer, numberOfTceCreams: number) {
+    this.moveTo(customer.location);
+    customer.wallet.debit(this.price * numberOfTceCreams);
+    this.wallet.credit(this.price * numberOfTceCreams);
+  }
 }
 
 /**********************************************************
@@ -105,8 +136,37 @@ class Vendor {
  *
  * new customer = new Customer(name, x, y);
  **********************************************************/
-class Customer {
+class Customer extends Person {
   // implement Customer!
+  constructor(name: string, x: number, y: number) {
+    super(name, x, y);
+    this.wallet.money = 10;
+  }
+
+  _isInRange(vendor: Vendor) {
+    return this.location.distanceTo(vendor.location) <= vendor.range;
+  }
+
+  _haveEnoughMoney(vendor: Vendor, numberOfIceCreams: number) {
+    return this.wallet.money >= vendor.price * numberOfIceCreams;
+  }
+
+  requestIceCream(vendor: Vendor, numberOfIceCreams: number) {
+    if (
+      this._isInRange(vendor) &&
+      this._haveEnoughMoney(vendor, numberOfIceCreams)
+    ) {
+      vendor.sellTo(this, numberOfIceCreams);
+    } else if (!this._isInRange(vendor)) {
+      console.log(
+        `this customer (${this.name}) is not in range with (${vendor.name}) `
+      );
+    } else if (!this._haveEnoughMoney(vendor, numberOfIceCreams)) {
+      console.log(
+        `${this.name} doesn't have enough money for ${numberOfIceCreams} Ice Creams`
+      );
+    }
+  }
 }
 
 export { Point, Wallet, Person, Customer, Vendor };
