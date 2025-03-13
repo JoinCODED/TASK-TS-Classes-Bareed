@@ -136,7 +136,7 @@ class Customer extends Person {
   // implement Customer!
   constructor(name: string, x: number, y: number) {
     super(name, x, y);
-    this.wallet = new Wallet(10);
+    this.wallet.money = 10;
   }
 
   _isInRange(vendor: Vendor) {
@@ -154,12 +154,10 @@ class Customer extends Person {
     ) {
       vendor.sellTo(this, numberOfIceCreams);
     } else if (!this._isInRange(vendor)) {
-      console.log(
-        `${this.name} is not in range to buy from vendor ${vendor.name}`
-      );
+      console.log(`${this.name} is not in range to buy from ${vendor.name}`);
     } else if (!this._haveEnoughMoney(vendor, numberOfIceCreams)) {
       console.log(
-        `${this.name} does not have enough money to buy ${numberOfIceCreams} ice creams from vendor ${vendor.name}`
+        `${this.name} does not have enough money to buy ${numberOfIceCreams} ice creams from ${vendor.name}`
       );
     }
   }
