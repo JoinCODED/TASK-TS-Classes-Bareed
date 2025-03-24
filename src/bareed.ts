@@ -50,9 +50,9 @@ class Wallet {
   // implement Wallet!
   constructor(money = 0) {}
 
-  credit = (amount: number) => {};
+  credit(amount: number) {};
 
-  debit = (amount: number) => {};
+  debit(amount: number) {};
 }
 
 /**********************************************************
