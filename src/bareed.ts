@@ -53,9 +53,13 @@ class Wallet {
   money: number;
   constructor(money = 0) {this.money = money;}
 
-  credit = (amount: number) => {this.money += amount;};
+  credit(amount: number) {
+    this.money += amount;
+  };
 
-  debit = (amount: number) => {this.money -= amount;};
+  debit(amount: number) {
+    this.money -= amount;
+  };
 }
 
 /**********************************************************
